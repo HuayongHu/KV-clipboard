@@ -2,83 +2,101 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>云剪切板</title>
- <style>
-/* 禁止移动端缩放 */
-        meta[name="viewport"] {
-            content: "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
-        }
-
-        /* 设置文本框样式 */
-        .full-width-textbox {
-            width: 90%; /* 文本框宽度为页面宽度的90% */
-            max-width: 90%; /* 最大宽度也为90%，防止在非常宽的屏幕上过度拉伸 */
-            margin: 0 auto; /* 水平居中 */
-            padding: 10px; /* 内边距 */
-            box-sizing: border-box; /* 包含内边距和边框在内的宽度计算 */
-            font-size: 16px; /* 字体大小 */
-            border: 1px solid #ccc; /* 边框样式 */
-            border-radius: 4px; /* 圆角边框 */
-        }
-
-    body {
-      font-family: 'Arial', sans-serif;
-      background-color: #f4f4f9;
+<style>
+    /* 全局样式 */
+    body, html {
+      height: 100%;
       margin: 0;
-      padding: 20px;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #f7f7f7;
       color: #333;
     }
 
-    h1 {
-      color: #5a67d8;
+    /* 容器样式 */
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
     }
 
-    #clipboardForm {
+    /* 标题样式 */
+    h1 {
+      color: #5a67d8;
       margin-bottom: 20px;
     }
 
-    textarea {
+    /* 表单样式 */
+    form {
       width: 100%;
-      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* 文本区域样式 */
+    textarea {
+      width: 80%; /* 修改宽度为80% */
+      max-width: 400px; /* 设置最大宽度 */
+      padding: 15px;
       margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
       resize: vertical;
     }
 
+    /* 按钮样式 */
     button {
-      padding: 10px 20px;
+      width: 80%; /* 修改宽度为80% */
+      max-width: 400px; /* 设置最大宽度 */
+      padding: 15px;
       background-color: #5a67d8;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 18px;
+      transition: background-color 0.3s ease;
     }
 
     button:hover {
       background-color: #4852c3;
     }
 
+    /* 剪切板容器样式 */
     #clipboardContainer {
-      background-color: white;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      padding: 10px;
+      width: 80%; /* 修改宽度为80% */
+      max-width: 400px; /* 设置最大宽度 */
       margin-top: 20px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      overflow-y: auto;
+      max-height: 300px;
     }
 
-    #clipboardContainer div {
+    /* 剪切板条目样式 */
+    .clipboard-entry {
       margin-bottom: 10px;
       padding: 5px;
       border-bottom: 1px solid #eee;
     }
 
-    #clipboardContainer div:last-child {
+    .clipboard-entry:last-child {
       border-bottom: none;
     }
-  </style>
+</style>
 <script>
 // Function to post data to the Cloudflare Worker
 async function postClipboardData(text) {
@@ -135,12 +153,13 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </head>
 <body>
-<h1>云剪切板</h1>
-
-<form id="clipboardForm">
-  <textarea id="clipboardText" rows="4" cols="50" placeholder="Enter text here..."></textarea><br>
-  <button type="submit">保存到云端</button>
-</form>
-<div id="clipboardContainer"></div>
+<div class="container">
+  <h1>云剪切板</h1>
+  <form id="clipboardForm">
+    <textarea id="clipboardText" rows="4" placeholder="输入文本..."></textarea>
+    <button type="submit">保存到云端</button>
+  </form>
+  <div id="clipboardContainer"></div>
+</div>
 </body>
 </html>
