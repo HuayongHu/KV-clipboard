@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>云剪切板</title>
+ <style>
+/* 禁止移动端缩放 */
+        meta[name="viewport"] {
+            content: "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+        }
+
+        /* 设置文本框样式 */
+        .full-width-textbox {
+            width: 90%; /* 文本框宽度为页面宽度的90% */
+            max-width: 90%; /* 最大宽度也为90%，防止在非常宽的屏幕上过度拉伸 */
+            margin: 0 auto; /* 水平居中 */
+            padding: 10px; /* 内边距 */
+            box-sizing: border-box; /* 包含内边距和边框在内的宽度计算 */
+            font-size: 16px; /* 字体大小 */
+            border: 1px solid #ccc; /* 边框样式 */
+            border-radius: 4px; /* 圆角边框 */
+        }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    h1 {
+      color: #5a67d8;
+    }
+
+    #clipboardForm {
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: vertical;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #5a67d8;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #4852c3;
+    }
+
+    #clipboardContainer {
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 10px;
+      margin-top: 20px;
+    }
+
+    #clipboardContainer div {
+      margin-bottom: 10px;
+      padding: 5px;
+      border-bottom: 1px solid #eee;
+    }
+
+    #clipboardContainer div:last-child {
+      border-bottom: none;
+    }
+  </style>
+<script>
+// Function to post data to the Cloudflare Worker
+async function postClipboardData(text) {
+  const timestamp = new Date().toISOString(); // Use ISO string as the key
+  try {
+    const response = await fetch('https://clipboard-api.010818.xyz/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ key: timestamp, value: text })
+    });
+    const data = await response.json();
+    alert('存入成功！');
+  } catch (error) {
+    console.error('Error posting data:', error);
+    alert('存入失败！');
+  }
+}
+
+// Function to get data from the Cloudflare Worker
+async function getClipboardData() {
+  try {
+    const response = await fetch('https://clipboard-api.010818.xyz/');
+    const data = await response.json();
+    console.log(data);
+    // Display the data in the UI
+    const clipboardContainer = document.getElementById('clipboardContainer');
+    clipboardContainer.innerHTML = '';
+    for (const [key, value] of Object.entries(data)) {
+      const entry = document.createElement('div');
+      entry.textContent = `${key}:${value}`;
+      clipboardContainer.appendChild(entry);
+    }
+  } catch (error) {
+    console.error('Error getting data:', error);
+    alert('Failed to retrieve clipboard data.');
+  }
+}
+
+// Event listener for the form submission
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('clipboardForm');
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const textArea = document.getElementById('clipboardText');
+    postClipboardData(textArea.value);
+    textArea.value = ''; // Clear the text area after posting
+  });
+
+  // Load clipboard data on page load
+  getClipboardData();
+});
+</script>
+</head>
+<body>
+<h1>云剪切板</h1>
+
+<form id="clipboardForm">
+  <textarea id="clipboardText" rows="4" cols="50" placeholder="Enter text here..."></textarea><br>
+  <button type="submit">保存到云端</button>
+</form>
+<div id="clipboardContainer"></div>
+</body>
+</html>
