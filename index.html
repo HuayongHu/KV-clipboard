@@ -5,92 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>云剪切板</title>
 <style>
-    /* 全局样式 */
     body, html {
       height: 100%;
       margin: 0;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background-color: #f7f7f7;
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      background-color: #f4f7f6;
       color: #333;
     }
 
-    /* 容器样式 */
     .container {
       max-width: 600px;
-      margin: 50px auto;
-      padding: 20px;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      margin: 40px auto;
+      padding: 30px;
       background-color: #fff;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       border-radius: 8px;
+      overflow: hidden;
     }
 
-    /* 标题样式 */
     h1 {
-      color: #5a67d8;
+      text-align: center;
       margin-bottom: 20px;
+      color: #333;
+      font-weight: 300;
     }
 
-    /* 表单样式 */
-    form {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* 文本区域样式 */
     textarea {
-      width: 80%; /* 修改宽度为80% */
-      max-width: 400px; /* 设置最大宽度 */
+      width: 100%;
       padding: 15px;
-      margin: 10px 0;
-      border: 2px solid #ddd;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
       border-radius: 6px;
       font-size: 16px;
       resize: vertical;
+      box-sizing: border-box;
     }
 
-    /* 按钮样式 */
     button {
-      width: 80%; /* 修改宽度为80% */
-      max-width: 400px; /* 设置最大宽度 */
+      width: 100%;
       padding: 15px;
-      background-color: #5a67d8;
+      background-color: #007bff;
       color: white;
       border: none;
       border-radius: 6px;
       cursor: pointer;
       font-size: 18px;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s;
     }
 
     button:hover {
-      background-color: #4852c3;
+      background-color: #0056b3;
     }
 
-    /* 剪切板容器样式 */
     #clipboardContainer {
-      width: 80%; /* 修改宽度为80% */
-      max-width: 400px; /* 设置最大宽度 */
-      margin-top: 20px;
-      padding: 15px;
-      background-color: #f9f9f9;
-      border: 2px solid #ddd;
-      border-radius: 6px;
-      overflow-y: auto;
+      border-top: 1px solid #ddd;
+      padding-top: 20px;
       max-height: 300px;
+      overflow-y: auto;
     }
 
-    /* 剪切板条目样式 */
     .clipboard-entry {
-      margin-bottom: 10px;
-      padding: 5px;
+      padding: 10px;
       border-bottom: 1px solid #eee;
+      color: #666;
+      font-size: 14px;
     }
 
     .clipboard-entry:last-child {
@@ -156,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <div class="container">
   <h1>云剪切板</h1>
   <form id="clipboardForm">
-    <textarea id="clipboardText" rows="4" placeholder="输入文本..."></textarea>
+    <textarea id="clipboardText" rows="4" placeholder="在这里输入文本..."></textarea>
     <button type="submit">保存到云端</button>
   </form>
   <div id="clipboardContainer"></div>
