@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>相亲相爱一家人(108)</title>
+<style>
+    body, html {
+  background-color: #ededed; /* 微信背景色 */
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* 防止页面滚动 */
+}
+   .container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.chat-container {
+  flex: 1;
+  overflow-y: auto; /* 允许聊天内容区域垂直滚动 */
+  padding: 10px;
+}
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #ffffff; /* 微信顶部横条背景色 */
+      color: #000000; /* 微信文本颜色 */
+      padding: 10px;
+      font-size: 18px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+    }
+
+    .header-bar .back-icon, .header-bar .details-icon {
+      font-size: 24px;
+      cursor: pointer;
+    }
+.message {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.message .avatar {
+  background-color: #8d8d8d; /* 微信头像背景色 */
+  width: 40px; /* 头像宽度 */
+  height: 40px; /* 头像高度 */
+  margin-right: 10px;
+  background-color: #007bff;
+  color: white;
+  text-align: center;
+  line-height: 40px; /* 使文字垂直居中 */
+  border-radius: 50%;
+  font-size: 18px;
+  flex-shrink: 0; /* 防止头像被挤压 */
+}
+
+.message .content {
+  flex-grow: 1;
+  background-color: #ffffff; /* 微信输入框背景色 */
+  color: #000000; /* 微信文本颜色 */
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  word-wrap: break-word; /* 允许长单词或URL内部进行换行 */
+  overflow-wrap: break-word; /* 在长单词或URL超出容器时进行换行 */
+}
+
+
+.message .time {
+      font-size: 12px;
+      color: #999;
+      margin-top: 5px;
+    }
+
+.input-container {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #ffffff; /* 微信输入框背景色 */
+  border-top: 1px solid #e0e0e0;
+}
+
+.input-container textarea {
+  background-color: #ffffff; /* 微信输入框背景色 */
+  color: #000000; /* 微信文本颜色 */
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-right: 10px;
+  height: 20px; /* 设置与按钮相同的高度 */
+  resize: none; /* 禁止调整大小 */
+  line-height: 1.2; /* 设置行高，确保单行文本垂直居中 */
+}
+
+.input-container button {
+  padding: 10px 15px;
+  background-color: #1AAD19; /* 微信按钮背景色 */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  height: 40px; /* 设置固定高度 */
+}
+
+#nicknameInput {
+  display: none; /* 隐藏昵称输入框 */
+}
+      .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.9); /* 微信顶部横条背景色，带透明度 */
+      color: #000000; /* 微信文本颜色 */
+      padding: 10px 15px;
+      font-size: 18px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+    }
+
+    .header-bar .back-icon, .header-bar .details-icon {
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+</style>
+<script>
+// Function to get the current time as a string
+function getCurrentTime() {
+  const now = new Date();
+  return now.toLocaleString(); // 使用本地时间格式
+}
+
+// Function to generate a random English name
+function generateRandomName() {
+  const names =  [
+    "Alice", "Bob", "Charlie", "David", "Eva", "Frank", "Grace", "Helen", "Ivy", "Jack",
+    "Lucy", "Mark", "Nancy", "Oliver", "Pam", "Quincy", "Rose", "Steve", "Tina", "Ursula",
+    "Victor", "Wendy", "Xavier", "Yvonne", "Zach", "Adam", "Bella", "Chris", "Diana", "Edgar",
+    "Fiona", "George", "Hannah", "Isaac", "Jasmine", "Kyle", "Lily", "Mason", "Nora", "Oscar",
+    "Paul", "Queenie", "Ryan", "Sophia", "Thomas", "Uma", "Vince", "Will", "Xena", "Yuri",
+    "Zoe", "Aiden", "Brianna", "Connor", "Emma", "Finn", "Gabriella", "Henry", "Isabella", "Jason",
+    "Kaitlyn", "Liam", "Mia", "Noah", "Olivia", "Peyton", "Quinn", "Ruby", "Sam", "Taylor",
+    "Ulysses", "Vanessa", "Wyatt", "Xander", "Yara", "Zane", "Ava", "Ben", "Caitlin", "Dane",
+    "Elena", "Freddie", "Gina", "Ian", "Jada", "Kevin", "Leah", "Matthew", "Nathaniel", "Octavia",
+    "Philip", "Quincy", "Robert", "Sarah", "Tim", "Una", "Victor", "Wesley", "Ximena", "Yousef",
+    "Zara"
+];
+  const randomIndex = Math.floor(Math.random() * names.length);
+  return names[randomIndex];
+}
+
+
+// Function to post data to the Cloudflare Worker
+async function postMessageData(text, nickname) {
+  const currentTime = getCurrentTime(); // Use current time as the key
+  const name = nickname || generateRandomName(); // If no nickname, generate a random one
+  try {
+    // Post time and nickname
+    await fetch('修改成你的网址', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ key: currentTime, value: name })
+    });
+    // Post message content
+    await fetch('修改成你的网址', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ key: currentTime + 'content', value: text })
+    });
+    // Refresh the page instead of showing an alert
+    window.location.reload();
+  } catch (error) {
+    console.error('Error posting data:', error);
+    alert('留言失败！');
+  }
+}
+
+// Function to get data from the Cloudflare Worker
+async function getMessageData() {
+  try {
+    const response = await fetch('修改成你的网址');
+    const data = await response.json();
+    // Sort the data by time in ascending order (oldest first)
+    const sortedData = Object.entries(data).sort((a, b) => a[0].localeCompare(b[0]));
+    // Display the data in the UI
+    const chatContainer = document.getElementById('chatContainer');
+    chatContainer.innerHTML = ''; // Clear the chat container
+
+    // Create a document fragment to store chat entries
+    const fragment = document.createDocumentFragment();
+
+    for (const [key, value] of sortedData) {
+      // Check if the key is for content
+      if (key.endsWith('content')) {
+        const nicknameKey = key.replace('content', '');
+        const nickname = data[nicknameKey];
+        const content = value;
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message';
+        messageDiv.innerHTML = `
+          <div class="avatar">${nickname[0]}</div>
+          <div class="content">
+            <strong>${nickname}:</strong>${content}
+            <div class="time">${nicknameKey}</div>
+          </div>
+        `;
+        fragment.appendChild(messageDiv);
+      }
+    }
+    chatContainer.appendChild(fragment);
+  } catch (error) {
+    console.error('Error getting data:', error);
+    alert('Failed to retrieve message data.');
+  }
+}
+
+// Event listener for the form submission
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('messageForm');
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const textInput = document.getElementById('messageText');
+    const nicknameInput = document.getElementById('nicknameInput');
+    postMessageData(textInput.value, nicknameInput.value);
+    textInput.value = ''; // Clear the text input after posting
+    nicknameInput.value = ''; // Clear the nickname input after posting
+  });
+
+  // Load message data on page load
+  getMessageData();
+});
+</script>
+</head>
+<body>
+  <div class="header-bar">
+  <div class="back-icon"> < </div>
+  <div>相亲相爱一家人(108)</div>
+  <div class="details-icon">···</div>
+</div>
+<div class="container">
+  <div id="chatContainer" class="chat-container"></div>
+  <br>
+  <div class="input-container">
+    <textarea id="messageText" rows="1" placeholder="在这里输入您想发表的内容..."></textarea>
+    <button type="submit" form="messageForm" style="height: 100%;">发送</button>
+  </div>
+</div>
+<form id="messageForm" style="display: none;"></form>
+</body>
+</html>
