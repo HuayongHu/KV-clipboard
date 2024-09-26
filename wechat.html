@@ -20,7 +20,7 @@
 .chat-container {
   flex: 1;
   overflow-y: auto; /* 允许聊天内容区域垂直滚动 */
-  padding: 50px;
+   padding: 50px 2vw 50px 2vw; /* 上下内边距保持不变，左右内边距设置为2%个屏幕宽度 */
 }
     .header-bar {
       display: flex;
@@ -59,6 +59,7 @@
   border-radius: 50%;
   font-size: 18px;
   flex-shrink: 0; /* 防止头像被挤压 */
+  margin-left: 2vw; /* 头像距离屏幕左侧约2%个屏幕宽度 */
 }
 
 .message .content {
@@ -85,6 +86,7 @@
   padding: 10px;
   background-color: #ffffff; /* 微信输入框背景色 */
   border-top: 1px solid #e0e0e0;
+  padding: 10px 2vw; /* 左右内边距设置为2%个屏幕宽度 */
 }
 
 .input-container textarea {
@@ -109,7 +111,7 @@
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
-  height: 40px; /* 设置固定高度 */
+  height: 20px; /* 设置固定高度 */
 }
 
 #nicknameInput {
