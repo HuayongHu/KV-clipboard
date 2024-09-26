@@ -64,35 +64,40 @@
       background-color: #0056b3;
     }
 
-    #clipboardContainer {
+    #messageContainer {
       border-top: 1px solid #ddd;
       padding-top: 20px;
-      max-height: 300px;
+      max-height: 500px;
       overflow-y: auto;
     }
 
-    .clipboard-entry {
-      padding: 10px;
-      border-bottom: 1px solid #eee;
+    .message-entry {
+      padding: 15px;
+      margin-bottom: 10px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
       color: #666;
       font-size: 14px;
-    }
-
-    .clipboard-entry:last-child {
-      border-bottom: none;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 </style>
 <script>
+// Function to get the current time as a string
+function getCurrentTime() {
+  const now = new Date();
+  return now.toLocaleString(); // 使用本地时间格式
+}
+
 // Function to post data to the Cloudflare Worker
-async function postClipboardData(text) {
-  const timestamp = new Date().toISOString(); // Use ISO string as the key
+async function postMessageData(text) {
+  const currentTime = getCurrentTime(); // Use current time as the key
   try {
     const response = await fetch('https://clipboard-api.010818.xyz/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ key: timestamp, value: text })
+      body: JSON.stringify({ key: currentTime, value: text })
     });
     const data = await response.json();
     alert('存入成功！');
@@ -103,56 +108,49 @@ async function postClipboardData(text) {
 }
 
 // Function to get data from the Cloudflare Worker
-async function getClipboardData() {
+async function getMessageData() {
   try {
     const response = await fetch('https://clipboard-api.010818.xyz/');
     const data = await response.json();
     // Display the data in the UI
-    const clipboardContainer = document.getElementById('clipboardContainer');
-    clipboardContainer.innerHTML = ''; // 清空容器
-    let isFirstEntry = true;
+    const messageContainer = document.getElementById('messageContainer');
+    messageContainer.innerHTML = ''; // 清空容器
     for (const [key, value] of Object.entries(data)) {
-      if (!isFirstEntry) {
-        // 添加分割线
-        const divider = document.createElement('div');
-        divider.style.borderBottom = '1px solid #ddd';
-        clipboardContainer.appendChild(divider);
-      }
       const entry = document.createElement('div');
-      entry.textContent = `${key}:${value}`;
-      entry.className = 'clipboard-entry'; // 确保有正确的样式
-      clipboardContainer.appendChild(entry);
-      isFirstEntry = false;
+      entry.innerHTML = `<strong>${key}:</strong>${value}`;
+      entry.className = 'message-entry'; // 确保有正确的样式
+      messageContainer.appendChild(entry);
     }
   } catch (error) {
     console.error('Error getting data:', error);
-    alert('Failed to retrieve clipboard data.');
+    alert('Failed to retrieve message data.');
   }
 }
+
 // Event listener for the form submission
 document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('clipboardForm');
+  const form = document.getElementById('messageForm');
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    const textArea = document.getElementById('clipboardText');
-    postClipboardData(textArea.value);
+    const textArea = document.getElementById('messageText');
+    postMessageData(textArea.value);
     textArea.value = ''; // Clear the text area after posting
   });
 
-  // Load clipboard data on page load
-  getClipboardData();
+  // Load message data on page load
+  getMessageData();
 });
 </script>
 </head>
 <body>
 <div class="container">
-  <!-- 替换标题为logo图片 -->
   <img src="logo.png" alt="云剪切板" class="logo"><br>
-  <form id="clipboardForm">
-    <textarea id="clipboardText" rows="4" placeholder="在这里输入文本..."></textarea>
-    <button type="submit">保存到云端</button>
+  <form id="messageForm">
+    <textarea id="messageText" rows="4" placeholder="在这里输入您需要存入的文本内容..."></textarea>
+    <button type="submit">存入云端</button>
   </form>
-  <div id="clipboardContainer"></div>
+  <div id="messageContainer"></div>
 </div>
 </body>
 </html>
+
