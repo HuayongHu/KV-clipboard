@@ -237,13 +237,23 @@ async function getMessageData() {
 // Event listener for the form submission
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('messageForm');
+  const textInput = document.getElementById('messageText');
+  const nicknameInput = document.getElementById('nicknameInput');
+
+  // Submit the form when the send button is clicked
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    const textInput = document.getElementById('messageText');
-    const nicknameInput = document.getElementById('nicknameInput');
     postMessageData(textInput.value, nicknameInput.value);
     textInput.value = ''; // Clear the text input after posting
     nicknameInput.value = ''; // Clear the nickname input after posting
+  });
+
+  // Submit the form when the enter key is pressed in the text input
+  textInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault(); // Prevent the default action of the enter key
+      form.dispatchEvent(new Event('submit')); // Manually trigger the form submission
+    }
   });
 
   // Load message data on page load
