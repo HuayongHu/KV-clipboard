@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>简易论坛</title>
+<style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      background-color: #f4f7f6;
+      color: #333;
+    }
+
+    .logo {
+      display: block;
+      margin: 0 auto;
+      width: 100px; /* 根据logo大小调整宽度 */
+      height: auto;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 30px;
+      background-color: #fff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+      font-weight: 300;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #messageContainer {
+      border-top: 1px solid #ddd;
+      padding-top: 20px;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .message-entry {
+      padding: 15px;
+      margin-bottom: 10px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      color: #666;
+      font-size: 14px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+/* 添加昵称输入框的样式 */
+    #nicknameInput {
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+</style>
+<script>
+// Function to get the current time as a string
+function getCurrentTime() {
+  const now = new Date();
+  return now.toLocaleString(); // 使用本地时间格式
+}
+
+// Function to generate a random English name
+function generateRandomName() {
+  const names = ["Alice", "Bob", "Charlie", "David", "Eva", "Frank", "Grace", "Helen", "Ivy", "Jack"];
+  const randomIndex = Math.floor(Math.random() * names.length);
+  return names[randomIndex];
+}
+
+// Function to post data to the Cloudflare Worker
+async function postMessageData(text, nickname) {
+  const currentTime = getCurrentTime(); // Use current time as the key
+  const name = nickname || generateRandomName(); // If no nickname, generate a random one
+  try {
+    // Post time and nickname
+    await fetch('替换成KV的接口', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ key: currentTime, value: name })
+    });
+    // Post message content
+    await fetch('替换成KV的接口', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ key: currentTime + 'content', value: text })
+    });
+    alert('留言成功！');
+  } catch (error) {
+    console.error('Error posting data:', error);
+    alert('留言失败！');
+  }
+}
+
+// Function to get data from the Cloudflare Worker
+async function getMessageData() {
+  try {
+    const response = await fetch('替换成KV的接口');
+    const data = await response.json();
+    // Sort the data by time in descending order
+    const sortedData = Object.entries(data).sort((a, b) => b[0].localeCompare(a[0]));
+    // Display the data in the UI
+    const messageContainer = document.getElementById('messageContainer');
+    messageContainer.innerHTML = ''; // 清空容器
+    for (const [key, value] of sortedData) {
+      // Check if the key is for content
+      if (key.endsWith('content')) {
+        const nicknameKey = key.replace('content', '');
+        const nickname = data[nicknameKey];
+        const content = value;
+        const entry = document.createElement('div');
+        entry.innerHTML = `<strong>${nickname}:</strong>${content}`;
+        entry.className = 'message-entry'; // 确保有正确的样式
+        messageContainer.appendChild(entry);
+      }
+    }
+  } catch (error) {
+    console.error('Error getting data:', error);
+    alert('Failed to retrieve message data.');
+  }
+}
+
+// Event listener for the form submission
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('messageForm');
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const textArea = document.getElementById('messageText');
+    const nicknameInput = document.getElementById('nicknameInput');
+    postMessageData(textArea.value, nicknameInput.value);
+    textArea.value = ''; // Clear the text area after posting
+    nicknameInput.value = ''; // Clear the nickname input after posting
+  });
+
+  // Load message data on page load
+  getMessageData();
+});
+</script>
+</head>
+<body>
+<div class="container">
+  <img src="logo.png" alt="简易论坛" class="logo"><br>
+  <form id="messageForm">
+    <input type="text" id="nicknameInput" placeholder="请输入您的昵称" required style="margin-bottom: 20px;"><br>
+    <textarea id="messageText" rows="4" placeholder="在这里输入您的留言内容..."></textarea>
+    <button type="submit">留言</button>
+  </form>
+  <div id="messageContainer"></div>
+</div>
+</body>
+</html>
